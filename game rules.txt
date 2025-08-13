@@ -1,0 +1,12 @@
+up to 8 cards in a hand
+each round, you have to beat the bind to win the round.
+you get 3 hands 3 discards for the round.
+you play runs in each round to win as many chips as possible for the round score. the round score is what you use to beat the round
+cash out after each blind to use in the store.
+
+8 antes, after defeating a blind, go to store to buy packs, tarot cards, jokers. essentially modifiers in the store.
+opening a pack, you can choose a type of card depending on what type of pack it is. so your hand can go over 52 cards with added special cards
+
+set amount of hands and discards per ante
+
+you can play up to 5 cards, if a card is not on the highest poker hand from the 5 cards played but is played, it can be discarded for free essentially going "unplayed"
