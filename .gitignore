@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+# Project build artifacts
+obj/
+balatro
+test_runner
+benchmark_exe
+deck_analysis
+hand_comparison
+
+# Runtime data
+*.dat
+obj/
+test_runner
+balatro_stats.dat
+balatro
+balatro_save.dat
