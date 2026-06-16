@@ -329,6 +329,35 @@ void GameManager::apply_joker_effects(const HandInfo& hand_info, int& chips, int
 }
 
 
+// Cheat methods
+
+void GameManager::add_joker_cheat(const string& joker_name) {
+    unique_ptr<Joker> joker(Joker_factory(joker_name));
+    if (joker) {
+        jokers.push_back(std::move(joker));
+    }
+}
+
+void GameManager::add_money_cheat(int amount) {
+    money += amount;
+}
+
+void GameManager::add_score_cheat(int amount) {
+    current_score += amount;
+}
+
+void GameManager::set_hands_cheat(int count) {
+    hands_left = count;
+}
+
+void GameManager::set_discards_cheat(int count) {
+    discards_left = count;
+}
+
+void GameManager::win_blind_cheat() {
+    current_score = chips_needed;
+}
+
 //EFFECTS Prints BlindType to stream
 ostream& operator<<(ostream& os, BlindType blind) {
     switch (blind) {

@@ -299,8 +299,82 @@ void show_shop(GameManager& game, Shop& shop) {
     }
 }
 
+//EFFECTS Shows cheat menu and handles cheat commands
+void cheat_menu(GameManager& game) {
+    while (true) {
+        clear_screen();
+        print_centered("CHEAT MENU", 60);
+        print_separator();
+        cout << endl;
+        cout << "1. Add Joker" << endl;
+        cout << "2. Add Money" << endl;
+        cout << "3. Add Score" << endl;
+        cout << "4. Set Hands remaining" << endl;
+        cout << "5. Set Discards remaining" << endl;
+        cout << "6. Win current blind" << endl;
+        cout << "7. Back" << endl;
+        cout << endl;
+
+        int choice = get_int_input("Choose cheat: ", 1, 7);
+
+        if (choice == 7) break;
+
+        switch (choice) {
+            case 1: {
+                cout << endl;
+                cout << "Available Jokers:" << endl;
+                cout << "  1. Joker (+4 Mult)" << endl;
+                cout << "  2. Pair Joker (+2 Mult per pair)" << endl;
+                cout << "  3. Flush Joker (+3 Mult per card in flush)" << endl;
+                cout << "  4. Face Card Joker (+2 Mult per face card)" << endl;
+
+                int joker_choice = get_int_input("Choose joker: ", 1, 4);
+                const char* names[] = {"Joker", "Pair Joker", "Flush Joker", "Face Card Joker"};
+                game.add_joker_cheat(names[joker_choice - 1]);
+                print_success(string("Added ") + names[joker_choice - 1] + "!");
+                wait_for_enter();
+                break;
+            }
+            case 2: {
+                int amount = get_int_input("Amount to add: $", 1, 99999);
+                game.add_money_cheat(amount);
+                print_success("Added $" + to_string(amount) + "!");
+                wait_for_enter();
+                break;
+            }
+            case 3: {
+                int amount = get_int_input("Score to add: ", 1, 999999);
+                game.add_score_cheat(amount);
+                print_success("Added " + format_number(amount) + " to score!");
+                wait_for_enter();
+                break;
+            }
+            case 4: {
+                int count = get_int_input("Set hands to: ", 0, 99);
+                game.set_hands_cheat(count);
+                print_success("Hands set to " + to_string(count) + "!");
+                wait_for_enter();
+                break;
+            }
+            case 5: {
+                int count = get_int_input("Set discards to: ", 0, 99);
+                game.set_discards_cheat(count);
+                print_success("Discards set to " + to_string(count) + "!");
+                wait_for_enter();
+                break;
+            }
+            case 6: {
+                game.win_blind_cheat();
+                print_success("Blind won!");
+                wait_for_enter();
+                return; // exit cheat menu so the blind-complete check fires
+            }
+        }
+    }
+}
+
 //EFFECTS Main gameplay loop for a single blind
-bool play_blind(GameManager& game, Shop& shop) {
+bool play_blind(GameManager& game, Shop& shop, bool cheat_mode) {
     while (game.get_hands_left() > 0 && !game.is_blind_complete()) {
         display_game_state(game);
         
@@ -311,8 +385,12 @@ bool play_blind(GameManager& game, Shop& shop) {
         cout << "4. View jokers" << endl;
         cout << "5. Save game" << endl;
         cout << "6. Quit game" << endl;
+        if (cheat_mode) {
+            cout << "7. Cheat menu" << endl;
+        }
         
-        int choice = get_int_input("Choose action: ", 1, 6);
+        int max_choice = cheat_mode ? 7 : 6;
+        int choice = get_int_input("Choose action: ", 1, max_choice);
         
         switch (choice) {
             case 1:
@@ -338,6 +416,9 @@ bool play_blind(GameManager& game, Shop& shop) {
                 break;
             case 6:
                 return false; // Quit
+            case 7:
+                cheat_menu(game);
+                break;
         }
     }
     
@@ -365,7 +446,7 @@ bool play_blind(GameManager& game, Shop& shop) {
 }
 
 //EFFECTS Loads and plays a saved game
-void load_and_play_game() {
+void load_and_play_game(bool cheat_mode) {
     GameManager game;
     
     if (game.load_game("balatro_save.dat")) {
@@ -375,7 +456,7 @@ void load_and_play_game() {
         Shop shop;
         
         while (game.get_game_state() == PLAYING) {
-            bool blind_completed = play_blind(game, shop);
+            bool blind_completed = play_blind(game, shop, cheat_mode);
             
             if (!blind_completed) {
                 // Game over
@@ -404,14 +485,14 @@ void load_and_play_game() {
 }
 
 //EFFECTS Main game loop
-void play_game() {
+void play_game(bool cheat_mode) {
     GameManager game;
     Shop shop;
     
     game.start_new_game();
     
     while (game.get_game_state() == PLAYING) {
-        bool blind_completed = play_blind(game, shop);
+        bool blind_completed = play_blind(game, shop, cheat_mode);
         
         if (!blind_completed) {
             // Game over
@@ -450,7 +531,14 @@ void play_game() {
 }
 
 //EFFECTS Main function
-int main() {
+int main(int argc, char* argv[]) {
+    bool cheat_mode = false;
+    for (int i = 1; i < argc; ++i) {
+        if (string(argv[i]) == "--cheat") {
+            cheat_mode = true;
+        }
+    }
+    
     seed_random();
     
     while (true) {
@@ -459,10 +547,10 @@ int main() {
         switch (choice) {
             case 1:
                 play_game_sound();
-                play_game();
+                play_game(cheat_mode);
                 break;
             case 2:
-                load_and_play_game();
+                load_and_play_game(cheat_mode);
                 break;
             case 3:
                 show_statistics();

@@ -103,6 +103,25 @@ public:
     //EFFECTS Returns string representation of current blind
     std::string get_blind_name() const;
     
+    //EFFECTS Adds a joker by name, bypassing shop/cost
+    //REQUIRES name is a valid joker name
+    void add_joker_cheat(const std::string& joker_name);
+    
+    //EFFECTS Adds the specified amount of money
+    void add_money_cheat(int amount);
+    
+    //EFFECTS Adds to current score
+    void add_score_cheat(int amount);
+    
+    //EFFECTS Sets hands remaining
+    void set_hands_cheat(int count);
+    
+    //EFFECTS Sets discards remaining
+    void set_discards_cheat(int count);
+    
+    //EFFECTS Completes the current blind immediately
+    void win_blind_cheat();
+    
     //EFFECTS Saves current game state to file
     //REQUIRES filename is a valid path
     //MODIFIES Creates/overwrites save file
